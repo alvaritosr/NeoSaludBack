@@ -33,10 +33,8 @@ public class SecurityConfig {
                 .cors(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(req -> req
                         .requestMatchers("/auth/**").permitAll()
-                        .requestMatchers("/perfiles/**").hasAnyAuthority("USER", "ADMIN")
-                        .requestMatchers("/productos/**").hasAnyAuthority("USER", "ADMIN")
-                        .requestMatchers("/mensaje/**").hasAnyAuthority("USER", "ADMIN")
-                        .requestMatchers("/chat/**").hasAnyAuthority("USER", "ADMIN")
+                        .requestMatchers("/mensaje/**").permitAll()
+                        .requestMatchers("/chat/**").permitAll()
                         .anyRequest().authenticated()
                 )
                 .authenticationProvider(authenticationProvider)
