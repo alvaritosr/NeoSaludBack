@@ -39,6 +39,8 @@ public class SecurityConfig {
                         .requestMatchers("/chat/**").hasAnyAuthority("USER", "ADMIN")
                         .requestMatchers("/api/prescripciones").permitAll()
                         .requestMatchers("/api/prescripciones/**").permitAll()
+                        .requestMatchers("/mensaje/**").permitAll()
+                        .requestMatchers("/chat/**").permitAll()
                         .anyRequest().authenticated()
                 )
                 .authenticationProvider(authenticationProvider)

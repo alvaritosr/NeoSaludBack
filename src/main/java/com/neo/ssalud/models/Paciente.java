@@ -1,5 +1,6 @@
 package com.neo.ssalud.models;
 
+import com.neo.ssalud.enums.Sexo;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -23,17 +24,41 @@ public class Paciente {
     @Column(name = "nombre")
     private String nombre;
 
-    @Column(name = "apellidos")
-    private String apellidos;
+    @Column(name = "primer_apellido")
+    private String primerApellido;
+
+    @Column(name = "segundo_apellido")
+    private String segundoApellido;
+
+    @Column(name = "anyo_nacimiento")
+    private String anyoNacimiento;
+
+    @Column(name = "dni")
+    private String dni;
+
+    @Column(name = "pasaporte")
+    private String pasaporte;
+
+    @Column(name = "nuss")
+    private String nuss;
+
+    @Column(name = "nh")
+    private String nh;
+
+    @Column(name = "nuhsa")
+    private String nuhsa;
 
     @Column(name = "fecha")
     private Date fecha;
 
-    @Column(name = "telefono")
-    private String telefono;
+    @Column(name = "sexo")
+    private Sexo sexo;
 
     @Column(name = "direccion")
     private String direccion;
+
+    @Column(name = "telefono")
+    private String telefono;
 
     @Column(name = "email")
     private String email;
