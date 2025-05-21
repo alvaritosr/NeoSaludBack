@@ -41,6 +41,7 @@ public class SecurityConfig {
                         .requestMatchers("/api/prescripciones/**").permitAll()
                         .requestMatchers("/mensaje/**").permitAll()
                         .requestMatchers("/chat/**").permitAll()
+                        .requestMatchers("/email/**").permitAll()
                         .anyRequest().authenticated()
                 )
                 .authenticationProvider(authenticationProvider)

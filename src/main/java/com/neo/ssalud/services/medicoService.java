@@ -90,7 +90,7 @@ public class medicoService implements UserDetailsService {
         if (usuarioOptional.isPresent()) {
             Medico usuario = usuarioOptional.get();
             String token = UUID.randomUUID().toString();
-            resetTokens.put(token, usuario.getUsername());
+            // resetTokens.put(token, usuario.getUsername());
             tokenExpiryDates.put(token, LocalDateTime.now().plusHours(1));
 
             String resetLink = "http://localhost:4200/restablecer-contrasena?token=" + token;
@@ -110,7 +110,7 @@ public class medicoService implements UserDetailsService {
                     "</body>" +
                     "</html>";
 
-            emailService.sendEmail(email, "Recuperación de Contraseña", emailContent);
+            emailService.enviarEmailRecuperacion(email, "Recuperación de Contraseña", emailContent);
         } else {
             throw new NoSuchElementException("Usuario no encontrado con el correo: " + email);
         }
