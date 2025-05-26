@@ -9,6 +9,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @RestController
@@ -58,10 +59,22 @@ public class medicoController {
     }
 
     @GetMapping("/pacientes/{nh}/consultas")
-    public ResponseEntity<List<Consulta>> verConsulta(
+    public ResponseEntity<List<LocalDateTime>> verConsulta(
             @PathVariable String nh,
             @RequestParam String usernameMedico) {
-        List<Consulta> consultas = medicoService.verConsulta(nh, usernameMedico);
-        return ResponseEntity.ok(consultas);
+        List<LocalDateTime> fechasConsultas = medicoService.verConsulta(nh, usernameMedico)
+                .stream()
+                .map(Consulta::getFechaConsulta)
+                .toList();
+        return ResponseEntity.ok(fechasConsultas);
+    }
+
+    @GetMapping("/pacientes/{nh}/consultas/{idConsulta}")
+    public ResponseEntity<Consulta> verDetalleConsulta(
+            @PathVariable String nh,
+            @PathVariable Long idConsulta,
+            @RequestParam String usernameMedico) {
+        Consulta consulta = medicoService.verDetalleConsulta(nh, idConsulta, usernameMedico);
+        return ResponseEntity.ok(consulta);
     }
 }
