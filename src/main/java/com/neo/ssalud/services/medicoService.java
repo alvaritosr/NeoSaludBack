@@ -231,4 +231,18 @@ public class medicoService implements UserDetailsService {
         return consulta;
     }
 
+    public Paciente verDetallePaciente(String nh, String usernameMedico) {
+        Medico medico = medicoRepository.findTopByUsername(usernameMedico)
+                .orElseThrow(() -> new NoSuchElementException("Médico no encontrado con el nombre: " + usernameMedico));
+
+        Paciente paciente = (Paciente) pacienteRepository.findByNh(nh)
+                .orElseThrow(() -> new NoSuchElementException("Paciente no encontrado con el nh: " + nh));
+
+        if (!paciente.getMedico().getId().equals(medico.getId())) {
+            throw new IllegalArgumentException("El paciente no está asociado al médico autenticado.");
+        }
+
+        return paciente;
+    }
+
 }

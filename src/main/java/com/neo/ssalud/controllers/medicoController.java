@@ -77,4 +77,12 @@ public class medicoController {
         Consulta consulta = medicoService.verDetalleConsulta(nh, idConsulta, usernameMedico);
         return ResponseEntity.ok(consulta);
     }
+
+    @GetMapping("/pacientes/{nh}")
+    public ResponseEntity<Paciente> verDetallePaciente(
+            @PathVariable String nh,
+            @RequestParam String usernameMedico) {
+        Paciente paciente = medicoService.verDetallePaciente(nh, usernameMedico);
+        return ResponseEntity.ok(paciente);
+    }
 }
