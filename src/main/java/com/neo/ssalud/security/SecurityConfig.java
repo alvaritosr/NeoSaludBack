@@ -37,6 +37,7 @@ public class SecurityConfig {
                         .requestMatchers("/chat/**").permitAll()
                         .requestMatchers("/email/**").permitAll()
                         .requestMatchers("/vacunas/**").permitAll()
+                        .requestMatchers("/tac/**").permitAll()
                         .anyRequest().authenticated()
                 )
                 .authenticationProvider(authenticationProvider)
