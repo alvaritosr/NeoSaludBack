@@ -1,5 +1,6 @@
 package com.neo.ssalud.models;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -25,6 +26,7 @@ public class Consulta {
     private Paciente paciente;
 
     @Column(name = "fecha_consulta")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss")
     private LocalDateTime fechaConsulta;
 
     @Column(name = "motivo_consulta")
