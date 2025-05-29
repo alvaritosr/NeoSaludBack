@@ -1,12 +1,18 @@
 package com.neo.ssalud.services;
 
 import com.neo.ssalud.dto.LoginDTO;
+import com.neo.ssalud.dto.PacienteDTO;
 import com.neo.ssalud.dto.RegistroDTO;
 import com.neo.ssalud.dto.RespuestaDTO;
+import com.neo.ssalud.models.Consulta;
 import com.neo.ssalud.models.Medico;
+import com.neo.ssalud.models.Paciente;
+import com.neo.ssalud.repositories.ConsultaRepository;
 import com.neo.ssalud.repositories.medicoRepository;
+import com.neo.ssalud.repositories.pacienteRepository;
 import com.neo.ssalud.security.JWTService;
 import lombok.AllArgsConstructor;
+import org.antlr.v4.runtime.misc.LogManager;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -18,10 +24,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
 
 import java.time.LocalDateTime;
-import java.util.Map;
-import java.util.NoSuchElementException;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
 @Service
@@ -33,6 +36,8 @@ public class medicoService implements UserDetailsService {
     private final PasswordEncoder passwordEncoder;
     private final JWTService jwtService;
     private final EmailService emailService;
+    private final pacienteRepository pacienteRepository;
+    private final ConsultaRepository consultaRepository;
 
     private final Map<String, String> resetTokens = new ConcurrentHashMap<>();
     private final Map<String, LocalDateTime> tokenExpiryDates = new ConcurrentHashMap<>();
@@ -136,4 +141,108 @@ public class medicoService implements UserDetailsService {
             throw new IllegalArgumentException("Token no válido o ha expirado");
         }
     }
+
+    public Paciente crearPaciente(PacienteDTO pacienteDTO, String usernameMedico) {
+        Medico medico = medicoRepository.findTopByUsername(usernameMedico)
+                .orElseThrow(() -> new NoSuchElementException("Médico no encontrado con el nombre: " + usernameMedico));
+
+        Paciente paciente = new Paciente();
+        paciente.setNombre(pacienteDTO.getNombre());
+        paciente.setPrimerApellido(pacienteDTO.getPrimerApellido());
+        paciente.setSegundoApellido(pacienteDTO.getSegundoApellido());
+        paciente.setAnyoNacimiento(pacienteDTO.getAnyoNacimiento());
+        paciente.setDni(pacienteDTO.getDni());
+        paciente.setPasaporte(pacienteDTO.getPasaporte());
+        paciente.setNuss(pacienteDTO.getNuss());
+        paciente.setNh(pacienteDTO.getNh());
+        paciente.setNuhsa(pacienteDTO.getNuhsa());
+        paciente.setFecha(pacienteDTO.getFecha());
+        paciente.setSexo(pacienteDTO.getSexo());
+        paciente.setDireccion(pacienteDTO.getDireccion());
+        paciente.setTelefono(pacienteDTO.getTelefono());
+        paciente.setEmail(pacienteDTO.getEmail());
+        paciente.setMedico(medico);
+
+
+        return pacienteRepository.save(paciente);
+    }
+
+    public Paciente cambiarMedicoDePaciente(String nh, String nuevoUsernameMedico) {
+        Paciente paciente = (Paciente) pacienteRepository.findByNh(nh)
+                .orElseThrow(() -> new NoSuchElementException("Paciente no encontrado con el nh: " + nh));
+
+        Medico nuevoMedico = medicoRepository.findTopByUsername(nuevoUsernameMedico)
+                .orElseThrow(() -> new NoSuchElementException("Médico no encontrado con el nombre: " + nuevoUsernameMedico));
+
+        paciente.setMedico(nuevoMedico);
+
+        return pacienteRepository.save(paciente);
+    }
+
+    public List<Paciente> buscarPacientes(String nombre, String primerApellido, String segundoApellido, String dni,
+                                          String pasaporte, String nuss, String nh, String nuhsa,
+                                          String anyoNacimiento, String direccion) {
+        return pacienteRepository.buscarPacientes(
+                nombre, primerApellido, segundoApellido, dni, pasaporte, nuss, nh, nuhsa, anyoNacimiento, direccion);
+    }
+
+    public Consulta crearConsulta(String nhPaciente, Consulta consulta) {
+        Paciente paciente = (Paciente) pacienteRepository.findByNh(nhPaciente)
+                .orElseThrow(() -> new NoSuchElementException("Paciente no encontrado con el nh: " + nhPaciente));
+
+        consulta.setPaciente(paciente);
+        consulta.setFechaConsulta(LocalDateTime.now());
+
+        return consultaRepository.save(consulta);
+    }
+
+    public List<Consulta> verConsulta(String nhPaciente, String usernameMedico) {
+        Medico medico = medicoRepository.findTopByUsername(usernameMedico)
+                .orElseThrow(() -> new NoSuchElementException("Médico no encontrado con el nombre: " + usernameMedico));
+
+        Paciente paciente = (Paciente) pacienteRepository.findByNh(nhPaciente)
+                .orElseThrow(() -> new NoSuchElementException("Paciente no encontrado con el nh: " + nhPaciente));
+
+        if (!paciente.getMedico().getId().equals(medico.getId())) {
+            throw new IllegalArgumentException("El paciente no está asociado al médico autenticado.");
+        }
+
+        return consultaRepository.findByPaciente(paciente);
+    }
+
+    public Consulta verDetalleConsulta(String nhPaciente, Long idConsulta, String usernameMedico) {
+        Medico medico = medicoRepository.findTopByUsername(usernameMedico)
+                .orElseThrow(() -> new NoSuchElementException("Médico no encontrado con el nombre: " + usernameMedico));
+
+        Paciente paciente = (Paciente) pacienteRepository.findByNh(nhPaciente)
+                .orElseThrow(() -> new NoSuchElementException("Paciente no encontrado con el nh: " + nhPaciente));
+
+        if (!paciente.getMedico().getId().equals(medico.getId())) {
+            throw new IllegalArgumentException("El paciente no está asociado al médico autenticado.");
+        }
+
+        Consulta consulta = consultaRepository.findById(idConsulta)
+                .orElseThrow(() -> new NoSuchElementException("Consulta no encontrada con el id: " + idConsulta));
+
+        if (!consulta.getPaciente().getId().equals(paciente.getId())) {
+            throw new IllegalArgumentException("La consulta no pertenece al paciente especificado.");
+        }
+
+        return consulta;
+    }
+
+    public Paciente verDetallePaciente(String nh, String usernameMedico) {
+        Medico medico = medicoRepository.findTopByUsername(usernameMedico)
+                .orElseThrow(() -> new NoSuchElementException("Médico no encontrado con el nombre: " + usernameMedico));
+
+        Paciente paciente = (Paciente) pacienteRepository.findByNh(nh)
+                .orElseThrow(() -> new NoSuchElementException("Paciente no encontrado con el nh: " + nh));
+
+        if (!paciente.getMedico().getId().equals(medico.getId())) {
+            throw new IllegalArgumentException("El paciente no está asociado al médico autenticado.");
+        }
+
+        return paciente;
+    }
+
 }

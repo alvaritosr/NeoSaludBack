@@ -42,6 +42,8 @@ public class SecurityConfig {
                         .requestMatchers("/mensaje/**").permitAll()
                         .requestMatchers("/chat/**").permitAll()
                         .requestMatchers("/email/**").permitAll()
+                        .requestMatchers("/vacunas/**").permitAll()
+                        .requestMatchers("/tac/**").permitAll()
                         .requestMatchers("/api/prescripciones/crear").permitAll()
                         .requestMatchers("/api/prescripciones/paciente/**").permitAll()
                         .requestMatchers("/api/prescripciones/medico/**").permitAll()
