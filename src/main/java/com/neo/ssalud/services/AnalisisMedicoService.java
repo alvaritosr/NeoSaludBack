@@ -1,6 +1,7 @@
 package com.neo.ssalud.services;
 
 import com.neo.ssalud.models.AnalisisMedico;
+import com.neo.ssalud.models.AntecedenteFamiliar;
 import com.neo.ssalud.models.Medico;
 import com.neo.ssalud.models.Paciente;
 import com.neo.ssalud.repositories.AnalisisMedicoRepository;
@@ -90,5 +91,15 @@ public class AnalisisMedicoService {
                 .orElseThrow(() -> new NoSuchElementException("Análisis médico no encontrado con el ID: " + analisisId));
     }
 
+
+    public AnalisisMedico obtenerAnalisisPorNombre(String nhPaciente, String nombre) {
+        Paciente paciente = (Paciente) pacienteRepository.findByNh(nhPaciente)
+                .orElseThrow(() -> new NoSuchElementException("Paciente no encontrado con el nh: " + nhPaciente));
+
+
+        return analisisMedicoRepository.findByTipoLikeIgnoreCase(nombre)
+                .filter(analisisMedico -> analisisMedico.getPaciente().getId().equals(paciente.getId()))
+                .orElseThrow(() -> new NoSuchElementException("Analisis no encontrada para el paciente especificado."));
+    }
 
 }

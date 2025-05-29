@@ -1,5 +1,6 @@
 package com.neo.ssalud.controllers;
 
+import com.neo.ssalud.models.Alergia;
 import com.neo.ssalud.models.AntecedenteFamiliar;
 import com.neo.ssalud.services.AntecedenteFamiliarService;
 import lombok.AllArgsConstructor;
@@ -10,7 +11,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/antecedentes-familiares")
+@RequestMapping("/antecedentes-familiares")
 @AllArgsConstructor
 public class AntecedenteFamiliarController {
 
@@ -39,6 +40,14 @@ public class AntecedenteFamiliarController {
             @PathVariable Long idAntecedente,
             @RequestParam String usernameMedico) {
         AntecedenteFamiliar antecedenteFamiliar = antecedenteFamiliarService.verAntecedenteFamiliarDetalle(nh, idAntecedente, usernameMedico);
+        return ResponseEntity.ok(antecedenteFamiliar);
+    }
+
+    @GetMapping("/pacientes/{nhPaciente}/detalles")
+    public ResponseEntity<AntecedenteFamiliar> obtenerAntecedenteFamiliarPorNombre(@PathVariable String nhPaciente,
+                                                           @RequestParam String nombre,
+                                                           @RequestParam String usernameMedico) {
+        AntecedenteFamiliar antecedenteFamiliar = antecedenteFamiliarService.obtenerAntecedenteFamiliarPorNombre(nhPaciente, nombre, usernameMedico);
         return ResponseEntity.ok(antecedenteFamiliar);
     }
 
