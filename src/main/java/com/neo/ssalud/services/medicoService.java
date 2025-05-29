@@ -59,7 +59,6 @@ public class medicoService implements UserDetailsService {
         nuevoMedico.setPassword(passwordEncoder.encode(dto.getPassword()));
         nuevoMedico.setEspecialidad(String.valueOf(dto.getEspecialidad()));
 
-        // Nuevos campos
         nuevoMedico.setNombre(dto.getNombre());
         nuevoMedico.setApellidos(dto.getApellidos());
         nuevoMedico.setTelefono(dto.getTelefono());
@@ -95,7 +94,6 @@ public class medicoService implements UserDetailsService {
         if (usuarioOptional.isPresent()) {
             Medico usuario = usuarioOptional.get();
             String token = UUID.randomUUID().toString();
-            // resetTokens.put(token, usuario.getUsername());
             tokenExpiryDates.put(token, LocalDateTime.now().plusHours(1));
 
             String resetLink = "http://localhost:4200/restablecer-contrasena?token=" + token;

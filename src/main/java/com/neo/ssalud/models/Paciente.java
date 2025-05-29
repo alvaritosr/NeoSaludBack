@@ -65,6 +65,10 @@ public class Paciente {
     @Column(name = "email")
     private String email;
 
+    @ManyToOne
+    @JoinColumn(name = "medico_id", nullable = false)
+    private Medico medico;
+
     @OneToMany(mappedBy = "paciente")
     @JsonManagedReference("paciente-prescripciones")
     private Set<Prescripcion> prescripciones;

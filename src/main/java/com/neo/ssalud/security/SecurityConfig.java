@@ -48,7 +48,7 @@ public class SecurityConfig {
                         .requestMatchers("/api/prescripciones/paciente/**").permitAll()
                         .requestMatchers("/api/prescripciones/medico/**").permitAll()
                         .requestMatchers("/api/prescripciones").permitAll()
-                        .requestMatchers("/api/prescripciones/**").permitAll() // Permitir acceso sin roles
+                        .requestMatchers("/api/prescripciones/**").permitAll()
                         .anyRequest().authenticated()
                 )
                 .authenticationProvider(authenticationProvider)
