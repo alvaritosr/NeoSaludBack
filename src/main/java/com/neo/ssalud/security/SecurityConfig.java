@@ -42,6 +42,11 @@ public class SecurityConfig {
                         .requestMatchers("/mensaje/**").permitAll()
                         .requestMatchers("/chat/**").permitAll()
                         .requestMatchers("/email/**").permitAll()
+                        .requestMatchers("/api/prescripciones/crear").permitAll()
+                        .requestMatchers("/api/prescripciones/paciente/**").permitAll()
+                        .requestMatchers("/api/prescripciones/medico/**").permitAll()
+                        .requestMatchers("/api/prescripciones").permitAll()
+                        .requestMatchers("/api/prescripciones/**").permitAll() // Permitir acceso sin roles
                         .anyRequest().authenticated()
                 )
                 .authenticationProvider(authenticationProvider)

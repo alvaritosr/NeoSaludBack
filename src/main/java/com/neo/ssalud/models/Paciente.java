@@ -1,10 +1,12 @@
 package com.neo.ssalud.models;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.neo.ssalud.enums.Sexo;
 import jakarta.persistence.*;
 import lombok.*;
 
 import java.util.Date;
+import java.util.Set;
 
 @Entity
 @Table(name = "paciente", schema = "neosalud")
@@ -62,4 +64,9 @@ public class Paciente {
 
     @Column(name = "email")
     private String email;
+
+    @OneToMany(mappedBy = "paciente")
+    @JsonManagedReference("paciente-prescripciones")
+    private Set<Prescripcion> prescripciones;
+
 }
