@@ -1,7 +1,13 @@
 package com.neo.ssalud.services;
 
+import com.neo.ssalud.models.Paciente;
+import com.neo.ssalud.models.Tac;
+import com.neo.ssalud.repositories.pacienteRepository;
+import com.neo.ssalud.repositories.tacRepository;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.RequiredArgsConstructor;
 import org.dcm4che3.data.Attributes;
 import org.dcm4che3.data.Tag;
 import org.dcm4che3.io.DicomInputStream;
@@ -20,12 +26,35 @@ import java.util.List;
 
 @Service
 @Validated
+@RequiredArgsConstructor
 public class TacService {
+
+    private final tacRepository tacRepository;
+    private final pacienteRepository pacienteRepository;
 
     private final Path dicomStoragePath = Paths.get("/data/dicom/");
 
     @Value("${dicom.base-path}")
     private String dicomBasePath;
+
+    public Tac asignarTacAPaciente(Long pacienteId, String nombreCarpeta) {
+        Paciente paciente = pacienteRepository.findById(pacienteId)
+                .orElseThrow(() -> new EntityNotFoundException("Paciente no encontrado con ID: " + pacienteId));
+
+        Tac nuevoTac = new Tac();
+        nuevoTac.setNombreCarpeta(nombreCarpeta);
+        nuevoTac.setPaciente(paciente);
+
+        return tacRepository.save(nuevoTac);
+    }
+
+    // Listar los TAC de un paciente
+    public List<Tac> obtenerTacsPorPaciente(Long pacienteId) {
+        if (!pacienteRepository.existsById(pacienteId)) {
+            throw new EntityNotFoundException("Paciente no encontrado con ID: " + pacienteId);
+        }
+        return tacRepository.findByPacienteId(pacienteId);
+    }
 
     public Resource getDicomFile(String folderName, String filename) throws IOException {
         Path filePath = Paths.get(dicomBasePath, folderName, filename);
