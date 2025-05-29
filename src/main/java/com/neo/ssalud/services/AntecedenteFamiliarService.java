@@ -1,5 +1,6 @@
 package com.neo.ssalud.services;
 
+import com.neo.ssalud.models.Alergia;
 import com.neo.ssalud.models.AntecedenteFamiliar;
 import com.neo.ssalud.models.Medico;
 import com.neo.ssalud.models.Paciente;
@@ -65,5 +66,21 @@ public class AntecedenteFamiliarService {
 
         return antecedenteFamiliarRepository.findById(idAntecedente)
                 .orElseThrow(() -> new NoSuchElementException("Antecedente familiar no encontrado con el id: " + idAntecedente));
+    }
+
+    public AntecedenteFamiliar obtenerAntecedenteFamiliarPorNombre(String nhPaciente, String nombre, String usernameMedico) {
+        Medico medico = medicoRepository.findTopByUsername(usernameMedico)
+                .orElseThrow(() -> new NoSuchElementException("Médico no encontrado con el nombre: " + usernameMedico));
+
+        Paciente paciente = (Paciente) pacienteRepository.findByNh(nhPaciente)
+                .orElseThrow(() -> new NoSuchElementException("Paciente no encontrado con el nh: " + nhPaciente));
+
+        if (!paciente.getMedico().getId().equals(medico.getId())) {
+            throw new IllegalArgumentException("El paciente no está asociado al médico autenticado.");
+        }
+
+        return antecedenteFamiliarRepository.findByEnfermedadLikeIgnoreCase(nombre)
+                .filter(antecedenteFamiliar -> antecedenteFamiliar.getPaciente().getId().equals(paciente.getId()))
+                .orElseThrow(() -> new NoSuchElementException("Antecedente no encontrada para el paciente especificado."));
     }
 }

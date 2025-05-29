@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/alergias")
+@RequestMapping("/alergias")
 public class AlergiaController {
 
     private final AlergiaService alergiaService;
@@ -41,4 +41,11 @@ public class AlergiaController {
         return ResponseEntity.ok(alergia);
     }
 
+    @GetMapping("/{nhPaciente}/alergias")
+    public ResponseEntity<Alergia> obtenerAlergiaPorNombre(@PathVariable String nhPaciente,
+                                                           @RequestParam String nombre,
+                                                           @RequestParam String usernameMedico) {
+        Alergia alergia = alergiaService.obtenerAlergiaPorNombre(nhPaciente, nombre, usernameMedico);
+        return ResponseEntity.ok(alergia);
+    }
 }
