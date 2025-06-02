@@ -200,6 +200,23 @@ public class medicoService implements UserDetailsService {
         return consultaRepository.save(consulta);
     }
 
+    public Consulta modificarConsulta(String nhPaciente, Long idConsulta, String motivo, String observaciones) {
+        Paciente paciente = (Paciente) pacienteRepository.findByNh(nhPaciente)
+                .orElseThrow(() -> new NoSuchElementException("Paciente no encontrado con el nh: " + nhPaciente));
+
+        Consulta consulta = consultaRepository.findById(idConsulta)
+                .orElseThrow(() -> new NoSuchElementException("Consulta no encontrada con el id: " + idConsulta));
+
+        if (!consulta.getPaciente().getId().equals(paciente.getId())) {
+            throw new IllegalArgumentException("La consulta no pertenece al paciente especificado.");
+        }
+
+        consulta.setMotivoConsulta(motivo);
+        consulta.setObservaciones(observaciones);
+
+        return consultaRepository.save(consulta);
+    }
+
     public List<Consulta> verConsultasPorMedico(String usernameMedico) {
         return consultaRepository.findByPaciente_Medico_Username(usernameMedico);
     }

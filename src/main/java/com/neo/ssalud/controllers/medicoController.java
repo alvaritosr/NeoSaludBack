@@ -32,6 +32,7 @@ public class medicoController {
         return ResponseEntity.status(HttpStatus.CREATED).body(nuevoPaciente);
     }
 
+
     @PutMapping("/pacientes/{nh}/cambiar-medico")
     public ResponseEntity<Paciente> cambiarMedicoDePaciente(
             @PathVariable String nh,
@@ -63,6 +64,19 @@ public class medicoController {
             @RequestBody Consulta consulta) {
         Consulta nuevaConsulta = medicoService.crearConsulta(nh, consulta);
         return ResponseEntity.status(HttpStatus.CREATED).body(nuevaConsulta);
+    }
+
+    @PutMapping("/pacientes/{nh}/consultas/{idConsulta}")
+    public ResponseEntity<Consulta> modificarConsulta(
+            @PathVariable String nh,
+            @PathVariable Long idConsulta,
+            @RequestBody Consulta consulta) {
+        Consulta nuevaConsulta = medicoService.modificarConsulta(
+                nh,
+                idConsulta,
+                consulta.getMotivoConsulta(),
+                consulta.getObservaciones());
+        return ResponseEntity.ok(nuevaConsulta);
     }
 
     @GetMapping("/{username}/consultas")
