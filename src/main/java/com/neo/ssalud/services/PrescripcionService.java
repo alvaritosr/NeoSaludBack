@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.NoSuchElementException;
 
 @Service
 public class PrescripcionService {
@@ -27,34 +28,33 @@ public class PrescripcionService {
     public PrescripcionDTO convertirAPrescripcionDTO(Prescripcion prescripcion) {
         return new PrescripcionDTO(
                 prescripcion.getId(),
-                prescripcion.getNombreComercial(),
+                prescripcion.getNombrePrescriptor(),
+                prescripcion.getNumeroColegiado(),
+                prescripcion.getEspecialidad(),
+                prescripcion.getFirmaDigital(),
+                prescripcion.getContactoPrescriptor(),
                 prescripcion.getNombreGenerico(),
-                prescripcion.getMedico() != null ? prescripcion.getMedico().getNombre() : null,
-                prescripcion.getPaciente() != null ? prescripcion.getPaciente().getNombre() : null,
-                prescripcion.getFechaEmision(),
+                prescripcion.getNombreComercial(),
+                prescripcion.getConcentracion(),
+                prescripcion.getFormaFarmaceutica(),
+                prescripcion.getViaAdministracion(),
                 prescripcion.getDosis(),
                 prescripcion.getFrecuencia(),
                 prescripcion.getDuracionDias(),
-                prescripcion.getNotasAdicionales()
+                prescripcion.getCantidadEnvases(),
+                prescripcion.getLugarEmision(),
+                prescripcion.getFechaEmision(),
+                prescripcion.getIndicacionesEspecificas(),
+                prescripcion.getNotasAdicionales(),
+                prescripcion.getMedico() != null ? prescripcion.getMedico().getId() : null,
+                prescripcion.getPaciente() != null ? prescripcion.getPaciente().getId() : null
         );
     }
-
 
     public PrescripcionDTO obtenerPorId(Long id) {
         Prescripcion prescripcion = prescripcionRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Prescripción no encontrada con ID: " + id));
-        return new PrescripcionDTO(
-                prescripcion.getId(),
-                prescripcion.getNombreComercial(),
-                prescripcion.getNombreGenerico(),
-                prescripcion.getMedico() != null ? prescripcion.getMedico().getNombre() : null,
-                prescripcion.getPaciente() != null ? prescripcion.getPaciente().getNombre() : null,
-                prescripcion.getFechaEmision(),
-                prescripcion.getDosis(),
-                prescripcion.getFrecuencia(),
-                prescripcion.getDuracionDias(),
-                prescripcion.getNotasAdicionales()
-        );
+        return convertirAPrescripcionDTO(prescripcion);
     }
 
     public Prescripcion guardar(Prescripcion prescripcion) {
@@ -77,23 +77,32 @@ public class PrescripcionService {
         return prescripcionRepository.findByMedicoNombreContainingIgnoreCase(nombrePrescriptor);
     }
 
-    public Prescripcion crearPrescripcion(Prescripcion prescripcion, String username) {
-        // Validar que el médico exista
-        Medico medico = medicoRepository.findTopByUsername(username)
-                .orElseThrow(() -> new RuntimeException("El médico con username '" + username + "' no fue encontrado."));
+    public Paciente obtenerPacientePorNh(String nhPaciente) {
+        return (Paciente) pacienteRepository.findByNh(nhPaciente)
+                .orElseThrow(() -> new NoSuchElementException("Paciente no encontrado con el nh: " + nhPaciente));
+    }
 
-        // Validar que el paciente exista
-        Paciente paciente = pacienteRepository.findById(prescripcion.getPaciente().getId())
-                .orElseThrow(() -> new RuntimeException("El paciente con ID '" + prescripcion.getPaciente().getId() + "' no fue encontrado."));
+    public Medico obtenerMedicoPorNh(String nhPaciente) {
+        Paciente paciente = (Paciente) pacienteRepository.findByNh(nhPaciente)
+                .orElseThrow(() -> new NoSuchElementException("Paciente no encontrado con el nh: " + nhPaciente));
 
-        // Asignar médico y paciente a la prescripción
+        return paciente.getMedico();
+    }
+
+    public Prescripcion crearPrescripcion(String nhPaciente, Prescripcion prescripcion, String usernameMedico) {
+        Paciente paciente = obtenerPacientePorNh(nhPaciente);
+        if (paciente == null) {
+            throw new NoSuchElementException("Paciente no encontrado con nh: " + nhPaciente);
+        }
+
+        Medico medico = paciente.getMedico();
+        if (medico == null) {
+            throw new NoSuchElementException("Médico no encontrado para el paciente con nh: " + nhPaciente);
+        }
+
         prescripcion.setMedico(medico);
         prescripcion.setPaciente(paciente);
 
-        // Establecer la fecha de emisión
-        prescripcion.setFechaEmision(LocalDate.now());
-
-        // Guardar la prescripción
         return prescripcionRepository.save(prescripcion);
     }
 }

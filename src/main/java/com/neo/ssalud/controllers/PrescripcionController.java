@@ -1,6 +1,8 @@
 package com.neo.ssalud.controllers;
 
 import com.neo.ssalud.dto.PrescripcionDTO;
+import com.neo.ssalud.models.Medico;
+import com.neo.ssalud.models.Paciente;
 import com.neo.ssalud.models.Prescripcion;
 import com.neo.ssalud.services.PrescripcionService;
 import org.springframework.http.HttpStatus;
@@ -16,7 +18,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/prescripciones")
+@RequestMapping("/prescripciones")
 @CrossOrigin(origins = "*")
 public class PrescripcionController {
     private final PrescripcionService service;
@@ -72,19 +74,29 @@ public class PrescripcionController {
     }
 
     @PostMapping("/crear")
-    @PreAuthorize("hasAnyRole('ADMIN', 'MEDICO')")
-    public ResponseEntity<?> crearPrescripcion(@Valid @RequestBody Prescripcion prescripcion) {
+    public ResponseEntity<?> crearPrescripcion(@RequestParam String nhPaciente, @Valid @RequestBody Prescripcion prescripcion) {
+        System.out.println("nhPaciente: " + nhPaciente);
+        System.out.println("Prescripción: " + prescripcion);
+
         try {
-            String username = obtenerUsernameActual(); // Método para obtener el username del usuario autenticado
-            Prescripcion nuevaPrescripcion = service.crearPrescripcion(prescripcion, username);
-            return ResponseEntity.status(HttpStatus.CREATED).body(nuevaPrescripcion);
+            Paciente paciente = service.obtenerPacientePorNh(nhPaciente);
+            if (paciente == null) {
+                return ResponseEntity.badRequest().body("No se encontró el paciente con nhPaciente: " + nhPaciente);
+            }
+
+            Medico medico = paciente.getMedico();
+            if (medico == null) {
+                return ResponseEntity.badRequest().body("No se encontró un médico asociado al paciente con nhPaciente: " + nhPaciente);
+            }
+
+            prescripcion.setPaciente(paciente);
+            prescripcion.setMedico(medico);
+
+            Prescripcion nuevaPrescripcion = service.crearPrescripcion(nhPaciente, prescripcion, medico.getUsername());
+            PrescripcionDTO prescripcionDTO = service.convertirAPrescripcionDTO(nuevaPrescripcion);
+            return ResponseEntity.status(HttpStatus.CREATED).body(prescripcionDTO);
         } catch (RuntimeException e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
-    }
-
-    private String obtenerUsernameActual() {
-        // Implementación para obtener el username del usuario autenticado
-        return "usuarioAutenticado"; // Reemplazar con lógica real
     }
 }

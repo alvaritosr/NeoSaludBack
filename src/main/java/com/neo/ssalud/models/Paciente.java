@@ -1,5 +1,6 @@
 package com.neo.ssalud.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.neo.ssalud.enums.Sexo;
 import jakarta.persistence.*;
@@ -66,6 +67,7 @@ public class Paciente {
     private String email;
 
     @ManyToOne
+    @JsonIgnore
     @JoinColumn(name = "medico_id", nullable = false)
     private Medico medico;
 
