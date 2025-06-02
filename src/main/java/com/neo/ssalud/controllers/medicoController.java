@@ -2,6 +2,7 @@ package com.neo.ssalud.controllers;
 
 import com.neo.ssalud.dto.PacienteDTO;
 import com.neo.ssalud.models.Consulta;
+import com.neo.ssalud.models.Medico;
 import com.neo.ssalud.models.Paciente;
 import com.neo.ssalud.services.medicoService;
 import lombok.AllArgsConstructor;
@@ -18,6 +19,12 @@ import java.util.List;
 public class medicoController {
 
     private final medicoService medicoService;
+
+    @GetMapping("/all")
+    public ResponseEntity<List<Medico>> obtenerTodosLosMedicos() {
+        List<Medico> medicos = medicoService.obtenerTodosLosMedicos();
+        return ResponseEntity.ok(medicos);
+    }
 
     @PostMapping("/{username}/pacientes")
     public ResponseEntity<Paciente> crearPaciente(@PathVariable String username, @RequestBody PacienteDTO pacienteDTO) {
@@ -58,6 +65,12 @@ public class medicoController {
         return ResponseEntity.status(HttpStatus.CREATED).body(nuevaConsulta);
     }
 
+    @GetMapping("/{username}/consultas")
+    public ResponseEntity<List<Consulta>> verConsultasPorMedico(@PathVariable String username) {
+        List<Consulta> consultas = medicoService.verConsultasPorMedico(username);
+        return ResponseEntity.ok(consultas);
+    }
+
     @GetMapping("/pacientes/{nh}/consultas")
     public ResponseEntity<List<LocalDateTime>> verConsulta(
             @PathVariable String nh,
@@ -83,6 +96,13 @@ public class medicoController {
             @PathVariable String nh,
             @RequestParam String usernameMedico) {
         Paciente paciente = medicoService.verDetallePaciente(nh, usernameMedico);
+        return ResponseEntity.ok(paciente);
+    }
+
+    @GetMapping("/pacientes/urgencias/{nh}")
+    public ResponseEntity<Paciente> verDetallePacienteSinMedico(
+            @PathVariable String nh) {
+        Paciente paciente = medicoService.verDetallePacienteSinMedico(nh);
         return ResponseEntity.ok(paciente);
     }
 }

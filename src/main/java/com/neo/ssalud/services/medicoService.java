@@ -48,6 +48,10 @@ public class medicoService implements UserDetailsService {
                 new NoSuchElementException("Usuario no encontrado con el nombre: " + username));
     }
 
+    public List<Medico> obtenerTodosLosMedicos() {
+        return medicoRepository.findAll();
+    }
+
     public Medico registrarUsuario(RegistroDTO dto) {
         if (medicoRepository.findTopByUsername(dto.getUsername()).isPresent()) {
             throw new IllegalArgumentException("El nombre de usuario '" + dto.getUsername() + "' ya está en uso.");
@@ -196,6 +200,10 @@ public class medicoService implements UserDetailsService {
         return consultaRepository.save(consulta);
     }
 
+    public List<Consulta> verConsultasPorMedico(String usernameMedico) {
+        return consultaRepository.findByPaciente_Medico_Username(usernameMedico);
+    }
+
     public List<Consulta> verConsulta(String nhPaciente, String usernameMedico) {
         Medico medico = medicoRepository.findTopByUsername(usernameMedico)
                 .orElseThrow(() -> new NoSuchElementException("Médico no encontrado con el nombre: " + usernameMedico));
@@ -241,6 +249,13 @@ public class medicoService implements UserDetailsService {
         if (!paciente.getMedico().getId().equals(medico.getId())) {
             throw new IllegalArgumentException("El paciente no está asociado al médico autenticado.");
         }
+
+        return paciente;
+    }
+
+    public Paciente verDetallePacienteSinMedico(String nh) {
+        Paciente paciente = (Paciente) pacienteRepository.findByNh(nh)
+                .orElseThrow(() -> new NoSuchElementException("Paciente no encontrado con el nh: " + nh));
 
         return paciente;
     }
