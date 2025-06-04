@@ -10,4 +10,6 @@ import java.util.Optional;
 public interface medicoRepository extends JpaRepository<Medico, Long> {
     Optional<Medico> findTopByUsername(String username);
     Optional<Medico> findByEmail(String email);
+
+    Optional<Medico> findByUsername(String username);
 }
