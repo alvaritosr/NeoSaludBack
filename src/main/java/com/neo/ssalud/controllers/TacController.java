@@ -1,6 +1,5 @@
 package com.neo.ssalud.controllers;
 
-import com.neo.ssalud.models.Paciente;
 import com.neo.ssalud.models.Tac;
 import com.neo.ssalud.repositories.pacienteRepository;
 import com.neo.ssalud.repositories.tacRepository;

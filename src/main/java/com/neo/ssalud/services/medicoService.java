@@ -12,7 +12,6 @@ import com.neo.ssalud.repositories.medicoRepository;
 import com.neo.ssalud.repositories.pacienteRepository;
 import com.neo.ssalud.security.JWTService;
 import lombok.AllArgsConstructor;
-import org.antlr.v4.runtime.misc.LogManager;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -57,13 +56,12 @@ public class medicoService implements UserDetailsService {
         nuevoMedico.setUsername(dto.getUsername());
         nuevoMedico.setEmail(dto.getEmail());
         nuevoMedico.setPassword(passwordEncoder.encode(dto.getPassword()));
-        nuevoMedico.setEspecialidad(String.valueOf(dto.getEspecialidad()));
 
         // Nuevos campos
         nuevoMedico.setNombre(dto.getNombre());
         nuevoMedico.setApellidos(dto.getApellidos());
-        nuevoMedico.setTelefono(dto.getTelefono());
         nuevoMedico.setNumero_colegiado(dto.getNumero_colegiado());
+        nuevoMedico.setRol(dto.getRol()); // Set the admin field
 
         return medicoRepository.save(nuevoMedico);
     }
