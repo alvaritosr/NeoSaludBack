@@ -1,5 +1,6 @@
 package com.neo.ssalud.controllers;
 
+import com.neo.ssalud.dto.ConsultaDTO;
 import com.neo.ssalud.dto.PacienteDTO;
 import com.neo.ssalud.models.Consulta;
 import com.neo.ssalud.models.Medico;
@@ -86,14 +87,14 @@ public class medicoController {
     }
 
     @GetMapping("/pacientes/{nh}/consultas")
-    public ResponseEntity<List<LocalDateTime>> verConsulta(
+    public ResponseEntity<List<ConsultaDTO>> verConsulta(
             @PathVariable String nh,
             @RequestParam String usernameMedico) {
-        List<LocalDateTime> fechasConsultas = medicoService.verConsulta(nh, usernameMedico)
+        List<ConsultaDTO> consultas = medicoService.verConsulta(nh, usernameMedico)
                 .stream()
-                .map(Consulta::getFechaConsulta)
+                .map(consulta -> new ConsultaDTO(consulta.getId(), consulta.getFechaConsulta()))
                 .toList();
-        return ResponseEntity.ok(fechasConsultas);
+        return ResponseEntity.ok(consultas);
     }
 
     @GetMapping("/pacientes/{nh}/consultas/{idConsulta}")
