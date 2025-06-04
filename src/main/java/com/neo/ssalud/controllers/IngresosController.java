@@ -17,9 +17,9 @@ public class IngresosController {
     @PostMapping
     public ResponseEntity<Ingresos> crearIngreso(
             @RequestParam String nh,
-            @RequestParam Long medicoId,
+            @RequestParam String username,
             @RequestBody Ingresos ingreso) {
-        Ingresos nuevoIngreso = ingresosService.crearIngreso(nh, medicoId, ingreso);
+        Ingresos nuevoIngreso = ingresosService.crearIngreso(nh, username, ingreso);
         return new ResponseEntity<>(nuevoIngreso, HttpStatus.CREATED);
     }
 

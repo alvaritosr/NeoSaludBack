@@ -25,8 +25,8 @@ public class IngresosService {
     @Autowired
     private medicoRepository medicoRepository;
 
-    public Ingresos crearIngreso(String nh, Long medicoId, Ingresos ingreso) {
-        Optional<Medico> medico = medicoRepository.findById(medicoId);
+    public Ingresos crearIngreso(String nh, String username, Ingresos ingreso) {
+        Optional<Medico> medico = medicoRepository.findByUsername(username);
         if (medico.isEmpty()) {
             throw new IllegalArgumentException("El médico no está autenticado o no existe.");
         }
