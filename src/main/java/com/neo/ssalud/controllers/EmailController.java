@@ -12,14 +12,12 @@ public class EmailController {
 
     private final EmailService emailService;
 
-    @PostMapping("/enviar")
+    @PostMapping(value = "/enviar", produces = "text/plain")
     public ResponseEntity<String> enviarCorreo(
             @RequestParam String destinatario,
             @RequestParam String asunto,
-            @RequestParam String contenido,
-            @RequestParam String userEmail,
-            @RequestParam String userPassword) {
-        emailService.enviarCorreo(destinatario, asunto, contenido, userEmail, userPassword);
+            @RequestParam String contenido) {
+        emailService.enviarCorreo(destinatario, asunto, contenido);
         return ResponseEntity.ok("Correo enviado exitosamente");
     }
 }

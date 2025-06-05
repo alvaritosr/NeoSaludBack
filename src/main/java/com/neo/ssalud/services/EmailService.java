@@ -34,21 +34,6 @@ public class EmailService {
         }
     }
 
-    public void enviarCorreo(String to, String subject, String body, String userEmail, String userPassword) {
-        JavaMailSender mailSender = createMailSender(userEmail, userPassword);
-        MimeMessage mimeMessage = mailSender.createMimeMessage();
-        try {
-            MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, true);
-            helper.setTo(to);
-            helper.setSubject(subject);
-            helper.setText(body, true);
-            mailSender.send(mimeMessage);
-        } catch (MessagingException e) {
-            throw new RuntimeException("Error al enviar el email", e);
-        }
-    }
-
-
     public void sendEmailWithAttachment(String to, String subject, String body, String attachmentPath, String attachmentName) {
         MimeMessage mimeMessage = mailSender.createMimeMessage();
         try {

@@ -21,6 +21,7 @@ public class medicoController {
 
     @PostMapping("/{username}/pacientes")
     public ResponseEntity<Paciente> crearPaciente(@PathVariable String username, @RequestBody PacienteDTO pacienteDTO) {
+        System.out.println("Creando paciente con datos: " + pacienteDTO);
         Paciente nuevoPaciente = medicoService.crearPaciente(pacienteDTO, username);
         return ResponseEntity.status(HttpStatus.CREATED).body(nuevoPaciente);
     }

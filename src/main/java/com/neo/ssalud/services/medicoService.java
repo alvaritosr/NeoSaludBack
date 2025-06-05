@@ -141,8 +141,10 @@ public class medicoService implements UserDetailsService {
     }
 
     public Paciente crearPaciente(PacienteDTO pacienteDTO, String usernameMedico) {
+
         Medico medico = medicoRepository.findTopByUsername(usernameMedico)
                 .orElseThrow(() -> new NoSuchElementException("Médico no encontrado con el nombre: " + usernameMedico));
+        System.out.println("Creando paciente con datos: " + pacienteDTO + " y médico: " + medico.getUsername());
 
         Paciente paciente = new Paciente();
         paciente.setNombre(pacienteDTO.getNombre());
