@@ -47,6 +47,11 @@ public class medicoService implements UserDetailsService {
                 new NoSuchElementException("Usuario no encontrado con el nombre: " + username));
     }
 
+    public Medico verDetalleMedico(Long id) {
+        return medicoRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Medico not found with ID: " + id));
+    }
+
     public Medico registrarUsuario(RegistroDTO dto) {
         if (medicoRepository.findTopByUsername(dto.getUsername()).isPresent()) {
             throw new IllegalArgumentException("El nombre de usuario '" + dto.getUsername() + "' ya está en uso.");

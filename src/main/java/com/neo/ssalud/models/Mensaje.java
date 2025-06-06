@@ -30,7 +30,7 @@ public class Mensaje {
 
     @ManyToOne
     @JoinColumn(name = "id_receptor", nullable = false)
-    private Paciente receptor;
+    private Medico receptor;
 
     @Column(name = "contenido", nullable = false)
     private String contenido;

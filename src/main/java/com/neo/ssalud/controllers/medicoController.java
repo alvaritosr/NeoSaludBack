@@ -2,6 +2,7 @@ package com.neo.ssalud.controllers;
 
 import com.neo.ssalud.dto.PacienteDTO;
 import com.neo.ssalud.models.Consulta;
+import com.neo.ssalud.models.Medico;
 import com.neo.ssalud.models.Paciente;
 import com.neo.ssalud.services.medicoService;
 import lombok.AllArgsConstructor;
@@ -18,6 +19,12 @@ import java.util.List;
 public class medicoController {
 
     private final medicoService medicoService;
+
+    @GetMapping("/{id}")
+    public ResponseEntity<Medico> verDetalleMedico(@PathVariable Long id) {
+        Medico medico = medicoService.verDetalleMedico(id);
+        return ResponseEntity.ok(medico);
+    }
 
     @PostMapping("/{username}/pacientes")
     public ResponseEntity<Paciente> crearPaciente(@PathVariable String username, @RequestBody PacienteDTO pacienteDTO) {

@@ -2,6 +2,7 @@ package com.neo.ssalud.controllers;
 
 import com.neo.ssalud.dto.ChatDTO;
 import com.neo.ssalud.dto.CrearChatDTO;
+import com.neo.ssalud.dto.ParticipanteChatDTO;
 import com.neo.ssalud.exception.RecursoNoEncontrado;
 import com.neo.ssalud.services.ChatService;
 import lombok.RequiredArgsConstructor;
@@ -25,18 +26,8 @@ public class ChatController {
     }
 
     @GetMapping("/medico/{idMedico}")
-    public ResponseEntity<?> getChatsByMedico(@PathVariable Long idMedico) {
-        try {
-            List<ChatDTO> chats = chatService.getChatsByMedico(idMedico);
-            return ResponseEntity.ok(chats);
-        } catch (RecursoNoEncontrado e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
-        }
-    }
-
-    @GetMapping("/paciente/{idPaciente}")
-    public ResponseEntity<List<ChatDTO>> getChatsByPaciente(@PathVariable Long idPaciente) {
-        List<ChatDTO> chats = chatService.getChatsByPaciente(idPaciente);
+    public ResponseEntity<List<ChatDTO>> getChatsById(@PathVariable Long idMedico) {
+        List<ChatDTO> chats = chatService.getChatById(idMedico);
         return ResponseEntity.ok(chats);
     }
 
@@ -44,5 +35,13 @@ public class ChatController {
     public ResponseEntity<ChatDTO> getDetallesChat(@PathVariable Long idChat) {
         ChatDTO chat = chatService.getDetallesChat(idChat);
         return chat != null ? ResponseEntity.ok(chat) : ResponseEntity.notFound().build();
+    }
+
+    @GetMapping("/otro-participante/{idChat}/{idMedico}")
+    public ResponseEntity<ParticipanteChatDTO> obtenerOtroParticipante(
+            @PathVariable Long idChat,
+            @PathVariable Long idMedico) {
+        ParticipanteChatDTO participante = chatService.obtenerOtroParticipante(idChat, idMedico);
+        return ResponseEntity.ok(participante);
     }
 }
