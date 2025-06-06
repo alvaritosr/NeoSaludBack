@@ -5,12 +5,11 @@ import com.neo.ssalud.exception.RecursoNoEncontrado;
 import com.neo.ssalud.models.Chat;
 import com.neo.ssalud.models.Medico;
 import com.neo.ssalud.models.Mensaje;
-import com.neo.ssalud.models.Paciente;
 import com.neo.ssalud.repositories.ChatRepository;
 import com.neo.ssalud.repositories.medicoRepository;
 import com.neo.ssalud.repositories.mensajeRepository;
-import com.neo.ssalud.repositories.pacienteRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
 
@@ -26,6 +25,7 @@ public class MensajeService {
     private final mensajeRepository mensajeRepository;
     private final ChatRepository chatRepository;
     private final medicoRepository medicoRepository;
+    private final SimpMessagingTemplate messagingTemplate;
 
     public MensajeDTO enviarMensaje(Long idEmisor, MensajeDTO mensajeDTO) {
         Medico emisor = medicoRepository.findById(idEmisor)
@@ -41,6 +41,9 @@ public class MensajeService {
             throw new IllegalArgumentException("El campo 'contenido' no puede ser nulo o vacío");
         }
 
+        if (emisor.equals(receptor)) {
+            throw new IllegalArgumentException("No se puede enviar mensaje a uno mismo");
+        }
 
         Mensaje mensaje = new Mensaje();
         mensaje.setChat(chat);
@@ -49,15 +52,15 @@ public class MensajeService {
         mensaje.setContenido(mensajeDTO.getContenido());
         mensaje.setFecha(LocalDateTime.now());
 
-        if (mensaje.getEmisor().equals(mensaje.getReceptor())) {
-            throw new IllegalArgumentException("No se puede enviar mensaje a uno mismo");
-        }
-
-
         mensajeRepository.save(mensaje);
-        return convertirAMensajeDTO(mensaje);
-    }
 
+        MensajeDTO mensajeGuardado = convertirAMensajeDTO(mensaje);
+
+        // Enviar mensaje vía WebSocket al topic del chat
+        messagingTemplate.convertAndSend("/topic/chat/" + mensajeGuardado.getIdChat(), mensajeGuardado);
+
+        return mensajeGuardado;
+    }
 
     public List<MensajeDTO> obtenerMensajesPorChat(Long idChat) {
         List<Mensaje> mensajes = mensajeRepository.findMessagesByChatId(idChat);
@@ -104,7 +107,6 @@ public class MensajeService {
         }
         return mensajes.stream().map(this::convertirAMensajeDTO).collect(Collectors.toList());
     }
-
 
     private MensajeDTO convertirAMensajeDTO(Mensaje mensaje) {
         MensajeDTO dto = new MensajeDTO();
