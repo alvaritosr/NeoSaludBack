@@ -33,6 +33,7 @@ public class SecurityConfig {
                 .cors(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(req -> req
                         .requestMatchers("/auth/**").permitAll()
+                        .requestMatchers("/auth/restablecer-contrasena").permitAll()
                         .requestMatchers("/perfiles/**").hasAnyAuthority("USER", "ADMIN")
                         .requestMatchers("/productos/**").hasAnyAuthority("USER", "ADMIN")
                         .requestMatchers("/mensaje/**").hasAnyAuthority("USER", "ADMIN")
@@ -50,8 +51,8 @@ public class SecurityConfig {
                         .requestMatchers("/prescripciones").permitAll()
                         .requestMatchers("/prescripciones/**").permitAll()
                         .requestMatchers("/historial-medico/**").permitAll()
-                        .requestMatchers("medicos/**").permitAll()
-                        .requestMatchers("medicos/pacientes/**").permitAll()
+                        .requestMatchers("/medicos/**").permitAll()
+                        .requestMatchers("/medicos/pacientes/**").permitAll()
                         .requestMatchers("/analisis-medico/**").permitAll()
                         .requestMatchers("/analisis-medico/tipos").permitAll()
                         .requestMatchers("/analisis-medico/crear").permitAll()
@@ -62,6 +63,7 @@ public class SecurityConfig {
                         .requestMatchers("/pacientes/**").permitAll()
                         .requestMatchers("/medicos/pacientes/**").permitAll()
                         .requestMatchers("/medicos/pacientes/buscar").permitAll()
+                        .requestMatchers("/prescripciones/eliminar/**").permitAll()
 
                         .anyRequest().authenticated()
                 )

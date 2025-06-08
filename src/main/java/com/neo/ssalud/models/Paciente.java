@@ -72,6 +72,7 @@ public class Paciente {
     private Medico medico;
 
     @OneToMany(mappedBy = "paciente")
+    @JsonIgnore
     @JsonManagedReference("paciente-prescripciones")
     private Set<Prescripcion> prescripciones;
 

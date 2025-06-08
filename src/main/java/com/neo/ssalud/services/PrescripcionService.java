@@ -105,4 +105,11 @@ public class PrescripcionService {
 
         return prescripcionRepository.save(prescripcion);
     }
+
+    public void eliminarPorId(Long prescripcionId) {
+        if (!prescripcionRepository.existsById(prescripcionId)) {
+            throw new RuntimeException("La prescripción con ID " + prescripcionId + " no existe.");
+        }
+        prescripcionRepository.deleteById(prescripcionId);
+    }
 }

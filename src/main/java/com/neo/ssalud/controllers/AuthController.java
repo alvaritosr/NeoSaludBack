@@ -14,6 +14,7 @@ import java.util.Map;
 @RestController
 @RequestMapping("/auth")
 @AllArgsConstructor
+@CrossOrigin(origins = "http://localhost:4200")
 public class AuthController {
 
     private medicoService service;
@@ -35,6 +36,7 @@ public class AuthController {
         return ResponseEntity.ok().build();
     }
 
+    @CrossOrigin(origins = "http://localhost:4200")
     @PostMapping("/restablecer-contrasena")
     public ResponseEntity<?> restablecerContrasena(@RequestBody Map<String, String> request) {
         String token = request.get("token");

@@ -99,4 +99,13 @@ public class PrescripcionController {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
+    @DeleteMapping("/eliminar/{prescripcionId}")
+    public ResponseEntity<?> eliminarPorId(@PathVariable Long prescripcionId) {
+        try {
+            service.eliminarPorId(prescripcionId);
+            return ResponseEntity.noContent().build(); // Devuelve 204 No Content
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Error: " + e.getMessage());
+        }
+    }
 }
