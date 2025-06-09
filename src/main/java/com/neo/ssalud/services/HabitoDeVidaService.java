@@ -28,10 +28,7 @@ public class HabitoDeVidaService {
         this.medicoRepository = medicoRepository;
     }
 
-    public habitoDeVida crearHabitoDeVida(String nh, String tipo, String frecuencia, String duracion, String observaciones) {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String usernameMedico = authentication.getName();
-
+    public habitoDeVida crearHabitoDeVida(String nh, habitoDeVida habito, String usernameMedico) {
         Medico medico = medicoRepository.findTopByUsername(usernameMedico)
                 .orElseThrow(() -> new NoSuchElementException("Médico no encontrado con el nombre: " + usernameMedico));
 
@@ -42,20 +39,11 @@ public class HabitoDeVidaService {
             throw new IllegalArgumentException("El paciente no está asociado al médico autenticado.");
         }
 
-        habitoDeVida habito = new habitoDeVida();
         habito.setPaciente(paciente);
-        habito.setTipo(tipo);
-        habito.setFrecuencia(frecuencia);
-        habito.setDuracion(duracion);
-        habito.setObservaciones(observaciones);
-
         return habitoDeVidaRepository.save(habito);
     }
 
-    public List<String> obtenerTiposDeHabitosDeVida(String nh) {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String usernameMedico = authentication.getName();
-
+    public List<String> obtenerTiposDeHabitosDeVida(String nh, String usernameMedico) {
         Medico medico = medicoRepository.findTopByUsername(usernameMedico)
                 .orElseThrow(() -> new NoSuchElementException("Médico no encontrado con el nombre: " + usernameMedico));
 
@@ -75,10 +63,7 @@ public class HabitoDeVidaService {
         return tipos;
     }
 
-    public habitoDeVida obtenerHabitoDeVidaPorId(String nh, Long habitoId) {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String usernameMedico = authentication.getName();
-
+    public habitoDeVida obtenerHabitoDeVidaPorTipo(String nh, String tipo, String usernameMedico) {
         Medico medico = medicoRepository.findTopByUsername(usernameMedico)
                 .orElseThrow(() -> new NoSuchElementException("Médico no encontrado con el nombre: " + usernameMedico));
 
@@ -89,7 +74,7 @@ public class HabitoDeVidaService {
             throw new IllegalArgumentException("El paciente no está asociado al médico autenticado.");
         }
 
-        return habitoDeVidaRepository.findById(habitoId)
-                .orElseThrow(() -> new NoSuchElementException("Hábito de vida no encontrado con el ID: " + habitoId));
+        return habitoDeVidaRepository.findByPacienteIdAndTipo(paciente.getId(), tipo)
+                .orElseThrow(() -> new NoSuchElementException("Hábito de vida no encontrado con el tipo: " + tipo));
     }
 }
