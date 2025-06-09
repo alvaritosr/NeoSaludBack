@@ -21,7 +21,7 @@ public class Ingresos {
     private Long id;
 
     @ManyToOne
-    @JoinColumn(name = "paciente_id", nullable = false)
+    @JoinColumn(name = "paciente_id")
     private Paciente paciente;
 
     @Column(name = "numero")
