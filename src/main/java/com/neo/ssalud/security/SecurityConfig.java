@@ -38,6 +38,7 @@ public class SecurityConfig {
                         .requestMatchers("/email/**").permitAll()
                         .requestMatchers("/vacunas/**").permitAll()
                         .requestMatchers("/tac/**").permitAll()
+                        .requestMatchers("/medicos/**").permitAll()
                         .anyRequest().authenticated()
                 )
                 .authenticationProvider(authenticationProvider)

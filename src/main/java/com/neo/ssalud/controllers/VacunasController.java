@@ -80,8 +80,9 @@ public class VacunasController {
     public ResponseEntity<?> asignarVacuna(
             @RequestParam Long pacienteId,
             @RequestParam Long vacunaId,
-            @RequestParam String dosis) {
-        return ResponseEntity.ok(vacunaPacienteService.asignarVacuna(pacienteId, vacunaId, dosis));
+            @RequestParam String dosis,
+            @RequestParam String fecha) {
+        return ResponseEntity.ok(vacunaPacienteService.asignarVacuna(pacienteId, vacunaId, dosis, fecha));
     }
 
     @GetMapping("/paciente/{pacienteId}")

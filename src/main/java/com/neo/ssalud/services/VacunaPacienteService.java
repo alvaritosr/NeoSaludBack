@@ -26,7 +26,7 @@ public class VacunaPacienteService {
     @Autowired
     private VacunaRepository vacunaRepository;
 
-    public VacunaPaciente asignarVacuna(Long pacienteId, Long vacunaId, String dosis) {
+    public VacunaPaciente asignarVacuna(Long pacienteId, Long vacunaId, String dosis, String fecha) {
         Optional<Paciente> pacienteOpt = pacienteRepository.findById(pacienteId);
         Optional<Vacuna> vacunaOpt = vacunaRepository.findById(vacunaId);
 
@@ -38,7 +38,7 @@ public class VacunaPacienteService {
         vacunaPaciente.setPaciente(pacienteOpt.get());
         vacunaPaciente.setVacuna(vacunaOpt.get());
         vacunaPaciente.setDosis(dosis);
-        vacunaPaciente.setFechaAdministracion(LocalDateTime.now());
+        vacunaPaciente.setFechaAdministracion(LocalDateTime.parse(fecha));
 
         return vacunaPacienteRepository.save(vacunaPaciente);
     }
