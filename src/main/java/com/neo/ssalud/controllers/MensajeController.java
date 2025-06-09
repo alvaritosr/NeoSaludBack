@@ -1,7 +1,9 @@
 package com.neo.ssalud.controllers;
 
 import com.neo.ssalud.dto.MensajeDTO;
+import com.neo.ssalud.security.JWTService;
 import com.neo.ssalud.services.MensajeService;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -14,11 +16,19 @@ import java.util.List;
 public class MensajeController {
 
     private final MensajeService mensajeService;
+    private final JWTService jwtService;
 
     @PostMapping("/enviar")
-    public ResponseEntity<MensajeDTO> enviarMensaje(@RequestBody MensajeDTO mensajeDTO) {
-        // Aquí deberías validar que el emisor es médico en el servicio
-        MensajeDTO mensajeCreado = mensajeService.enviarMensaje(mensajeDTO);
+    public ResponseEntity<MensajeDTO> enviarMensaje(HttpServletRequest request,
+                                                    @RequestBody MensajeDTO mensajeDTO) {
+        String authHeader = request.getHeader("Authorization");
+        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+            throw new RuntimeException("Token no presente o no válido en la cabecera Authorization");
+        }
+        String token = authHeader.substring(7);
+        Long idEmisor = jwtService.extractTokenData(token).getId();
+
+        MensajeDTO mensajeCreado = mensajeService.enviarMensaje(idEmisor, mensajeDTO);
         return mensajeCreado != null ? ResponseEntity.ok(mensajeCreado) : ResponseEntity.badRequest().build();
     }
 

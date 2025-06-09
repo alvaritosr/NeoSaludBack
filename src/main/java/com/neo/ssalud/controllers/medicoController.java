@@ -21,6 +21,12 @@ public class medicoController {
 
     private final medicoService medicoService;
 
+    @GetMapping("/{id}")
+    public ResponseEntity<Medico> verDetalleMedico(@PathVariable Long id) {
+        Medico medico = medicoService.verDetalleMedico(id);
+        return ResponseEntity.ok(medico);
+    }
+
     @GetMapping("/all")
     public ResponseEntity<List<Medico>> obtenerTodosLosMedicos() {
         List<Medico> medicos = medicoService.obtenerTodosLosMedicos();
@@ -29,6 +35,7 @@ public class medicoController {
 
     @PostMapping("/{username}/pacientes")
     public ResponseEntity<Paciente> crearPaciente(@PathVariable String username, @RequestBody PacienteDTO pacienteDTO) {
+        System.out.println("Creando paciente con datos: " + pacienteDTO);
         Paciente nuevoPaciente = medicoService.crearPaciente(pacienteDTO, username);
         return ResponseEntity.status(HttpStatus.CREATED).body(nuevoPaciente);
     }

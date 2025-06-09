@@ -1,5 +1,6 @@
 package com.neo.ssalud.security;
 
+import com.neo.ssalud.enums.Rol;
 import com.neo.ssalud.models.Medico;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
@@ -32,7 +33,8 @@ public class JWTService {
                 .builder()
                 .id(medico.getId())
                 .username(medico.getUsername())
-                .rol(medico.getEspecialidad())
+                .rol(medico.getRol())
+                .email(medico.getEmail())
                 .fecha_creacion(System.currentTimeMillis())
                 .fecha_expiracion(System.currentTimeMillis() + 1000 * 60 * 60 * 3)
                 .build();
@@ -65,7 +67,7 @@ public class JWTService {
         String username = (String) mapa.get("username");
         Number fechaCreacion = (Number) mapa.get("fecha_creacion");
         Number fechaExpiracion = (Number) mapa.get("fecha_expiracion");
-        String rol = (String) mapa.get("rol");
+        Rol rol = Rol.valueOf((String) mapa.get("rol"));
         Number id = (Number) mapa.get("id");
 
         if (fechaCreacion == null || fechaExpiracion == null || id == null) {

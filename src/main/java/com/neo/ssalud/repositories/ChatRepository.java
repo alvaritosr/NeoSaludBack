@@ -11,13 +11,7 @@ import java.util.Optional;
 
 @Repository
 public interface ChatRepository extends JpaRepository<Chat, Long> {
-    @Query("SELECT c FROM Chat c WHERE c.medico.id = :id OR c.paciente.id = :id")
+    @Query("SELECT c FROM Chat c WHERE c.creador.id = :id OR c.receptor.id = :id")
     List<Chat> findChatsByUserId(@Param("id") Long id);
-
-    // Para obtener chats por médico
-    List<Chat> findChatsByMedicoId(Long idMedico);
-
-    // Para obtener chats por paciente
-    List<Chat> findChatsByPacienteId(Long idPaciente);
 }
 

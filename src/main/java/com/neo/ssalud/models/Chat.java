@@ -19,10 +19,10 @@ public class Chat {
     private Long id;
 
     @ManyToOne
-    @JoinColumn(name = "id_medico", nullable = false)
-    private Medico medico;
+    @JoinColumn(name = "id_creador", nullable = false)
+    private Medico creador;
 
     @ManyToOne
-    @JoinColumn(name = "id_paciente", nullable = false)
-    private Paciente paciente;
+    @JoinColumn(name = "id_receptor", nullable = false)
+    private Medico receptor;
 }

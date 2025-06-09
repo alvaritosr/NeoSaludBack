@@ -12,7 +12,6 @@ import com.neo.ssalud.repositories.medicoRepository;
 import com.neo.ssalud.repositories.pacienteRepository;
 import com.neo.ssalud.security.JWTService;
 import lombok.AllArgsConstructor;
-import org.antlr.v4.runtime.misc.LogManager;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -52,6 +51,11 @@ public class medicoService implements UserDetailsService {
         return medicoRepository.findAll();
     }
 
+    public Medico verDetalleMedico(Long id) {
+        return medicoRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Medico not found with ID: " + id));
+    }
+
     public Medico registrarUsuario(RegistroDTO dto) {
         if (medicoRepository.findTopByUsername(dto.getUsername()).isPresent()) {
             throw new IllegalArgumentException("El nombre de usuario '" + dto.getUsername() + "' ya está en uso.");
@@ -61,13 +65,12 @@ public class medicoService implements UserDetailsService {
         nuevoMedico.setUsername(dto.getUsername());
         nuevoMedico.setEmail(dto.getEmail());
         nuevoMedico.setPassword(passwordEncoder.encode(dto.getPassword()));
-        nuevoMedico.setEspecialidad(String.valueOf(dto.getEspecialidad()));
 
         // Nuevos campos
         nuevoMedico.setNombre(dto.getNombre());
         nuevoMedico.setApellidos(dto.getApellidos());
-        nuevoMedico.setTelefono(dto.getTelefono());
         nuevoMedico.setNumero_colegiado(dto.getNumero_colegiado());
+        nuevoMedico.setRol(dto.getRol()); // Set the admin field
 
         return medicoRepository.save(nuevoMedico);
     }
@@ -147,8 +150,10 @@ public class medicoService implements UserDetailsService {
     }
 
     public Paciente crearPaciente(PacienteDTO pacienteDTO, String usernameMedico) {
+
         Medico medico = medicoRepository.findTopByUsername(usernameMedico)
                 .orElseThrow(() -> new NoSuchElementException("Médico no encontrado con el nombre: " + usernameMedico));
+        System.out.println("Creando paciente con datos: " + pacienteDTO + " y médico: " + medico.getUsername());
 
         Paciente paciente = new Paciente();
         paciente.setNombre(pacienteDTO.getNombre());

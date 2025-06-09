@@ -5,18 +5,15 @@ import com.neo.ssalud.exception.RecursoNoEncontrado;
 import com.neo.ssalud.models.Chat;
 import com.neo.ssalud.models.Medico;
 import com.neo.ssalud.models.Mensaje;
-import com.neo.ssalud.models.Paciente;
 import com.neo.ssalud.repositories.ChatRepository;
 import com.neo.ssalud.repositories.medicoRepository;
 import com.neo.ssalud.repositories.mensajeRepository;
-import com.neo.ssalud.repositories.pacienteRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
 
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-import java.time.format.DateTimeParseException;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -28,20 +25,24 @@ public class MensajeService {
     private final mensajeRepository mensajeRepository;
     private final ChatRepository chatRepository;
     private final medicoRepository medicoRepository;
-    private final pacienteRepository pacienteRepository;
+    private final SimpMessagingTemplate messagingTemplate;
 
-    public MensajeDTO enviarMensaje(MensajeDTO mensajeDTO) {
-        Medico emisor = medicoRepository.findById(mensajeDTO.getIdEmisor())
-                .orElseThrow(() -> new RecursoNoEncontrado("Médico emisor no encontrado"));
+    public MensajeDTO enviarMensaje(Long idEmisor, MensajeDTO mensajeDTO) {
+        Medico emisor = medicoRepository.findById(idEmisor)
+                .orElseThrow(() -> new RecursoNoEncontrado("Médico emisor no encontrado con id: " + idEmisor));
 
-        Paciente receptor = pacienteRepository.findById(mensajeDTO.getIdReceptor())
-                .orElseThrow(() -> new RecursoNoEncontrado("Paciente receptor no encontrado"));
+        Medico receptor = medicoRepository.findById(mensajeDTO.getIdReceptor())
+                .orElseThrow(() -> new RecursoNoEncontrado("Medico receptor no encontrado"));
 
         Chat chat = chatRepository.findById(mensajeDTO.getIdChat())
                 .orElseThrow(() -> new RecursoNoEncontrado("Chat no encontrado"));
 
         if (mensajeDTO.getContenido() == null || mensajeDTO.getContenido().isEmpty()) {
             throw new IllegalArgumentException("El campo 'contenido' no puede ser nulo o vacío");
+        }
+
+        if (emisor.equals(receptor)) {
+            throw new IllegalArgumentException("No se puede enviar mensaje a uno mismo");
         }
 
         Mensaje mensaje = new Mensaje();
@@ -51,10 +52,14 @@ public class MensajeService {
         mensaje.setContenido(mensajeDTO.getContenido());
         mensaje.setFecha(LocalDateTime.now());
 
-
-
         mensajeRepository.save(mensaje);
-        return convertirAMensajeDTO(mensaje);
+
+        MensajeDTO mensajeGuardado = convertirAMensajeDTO(mensaje);
+
+        // Enviar mensaje vía WebSocket al topic del chat
+        messagingTemplate.convertAndSend("/topic/chat/" + mensajeGuardado.getIdChat(), mensajeGuardado);
+
+        return mensajeGuardado;
     }
 
     public List<MensajeDTO> obtenerMensajesPorChat(Long idChat) {
@@ -103,13 +108,12 @@ public class MensajeService {
         return mensajes.stream().map(this::convertirAMensajeDTO).collect(Collectors.toList());
     }
 
-
     private MensajeDTO convertirAMensajeDTO(Mensaje mensaje) {
         MensajeDTO dto = new MensajeDTO();
         dto.setId(mensaje.getId());
         dto.setIdChat(mensaje.getChat().getId());
-        dto.setIdEmisor(mensaje.getEmisor().getId());
         dto.setIdReceptor(mensaje.getReceptor().getId());
+        dto.setIdEmisor(mensaje.getEmisor().getId());
         dto.setContenido(mensaje.getContenido());
         dto.setFecha(mensaje.getFecha().toString());
         return dto;

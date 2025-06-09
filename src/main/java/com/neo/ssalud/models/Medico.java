@@ -1,5 +1,6 @@
 package com.neo.ssalud.models;
 
+import com.neo.ssalud.enums.Rol;
 import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
@@ -25,6 +26,9 @@ public class Medico implements UserDetails {
     @Column(name = "id")
     private Long id;
 
+    @Column(name = "rol")
+    private Rol rol;
+
     @Column(name = "numero_colegiado")
     private Integer numero_colegiado;
 
@@ -43,12 +47,6 @@ public class Medico implements UserDetails {
     @Column(name = "password")
     private String password;
 
-    @Column(name = "telefono")
-    private String telefono;
-
-    @Column(name = "especialidad")
-    private String especialidad;
-
     @ManyToMany(mappedBy = "medicos")
     private Set<centroMedico> centrosMedicos;
 
@@ -57,7 +55,7 @@ public class Medico implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return Collections.singletonList(new SimpleGrantedAuthority(this.especialidad));
+        return Collections.singletonList(new SimpleGrantedAuthority(this.rol.name()));
     }
 
     @Override

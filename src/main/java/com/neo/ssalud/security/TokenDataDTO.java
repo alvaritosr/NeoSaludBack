@@ -1,5 +1,6 @@
 package com.neo.ssalud.security;
 
+import com.neo.ssalud.enums.Rol;
 import lombok.Builder;
 import lombok.Data;
 
@@ -8,7 +9,8 @@ import lombok.Data;
 public class TokenDataDTO {
     private Long id;
     private String username;
-    private String rol;
+    private Rol rol;
+    private String email;
     private Long fecha_creacion;
     private Long fecha_expiracion;
 }

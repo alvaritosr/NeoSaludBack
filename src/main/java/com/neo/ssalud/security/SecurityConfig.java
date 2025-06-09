@@ -38,6 +38,8 @@ public class SecurityConfig {
                         .requestMatchers("/email/**").permitAll()
                         .requestMatchers("/vacunas/**").permitAll()
                         .requestMatchers("/tac/**").permitAll()
+                        .requestMatchers("/medicos/**").permitAll()
+                        .requestMatchers("/ws/**").permitAll()
                         .anyRequest().authenticated()
                 )
                 .authenticationProvider(authenticationProvider)
