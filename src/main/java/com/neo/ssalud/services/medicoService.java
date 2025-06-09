@@ -235,6 +235,10 @@ public class medicoService implements UserDetailsService {
         return consultaRepository.findByPaciente(paciente);
     }
 
+    public List<Consulta> verTodasLasConsultas() {
+        return consultaRepository.findAll();
+    }
+
     public Consulta verDetalleConsulta(String nhPaciente, Long idConsulta, String usernameMedico) {
         Medico medico = medicoRepository.findTopByUsername(usernameMedico)
                 .orElseThrow(() -> new NoSuchElementException("Médico no encontrado con el nombre: " + usernameMedico));

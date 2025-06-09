@@ -97,6 +97,12 @@ public class medicoController {
         return ResponseEntity.ok(consultas);
     }
 
+    @GetMapping("/consultas")
+    public ResponseEntity<List<Consulta>> verTodasLasConsultas() {
+        List<Consulta> consultas = medicoService.verTodasLasConsultas();
+        return ResponseEntity.ok(consultas);
+    }
+
     @GetMapping("/pacientes/{nh}/consultas/{idConsulta}")
     public ResponseEntity<Consulta> verDetalleConsulta(
             @PathVariable String nh,
