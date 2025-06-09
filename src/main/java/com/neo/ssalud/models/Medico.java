@@ -1,5 +1,7 @@
 package com.neo.ssalud.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
@@ -50,7 +52,14 @@ public class Medico implements UserDetails {
     private String especialidad;
 
     @ManyToMany(mappedBy = "medicos")
+    @JsonIgnore
     private Set<centroMedico> centrosMedicos;
+
+    @OneToMany(mappedBy = "medico")
+    @JsonIgnore
+    @JsonManagedReference("medico-prescripciones")
+    private Set<Prescripcion> prescripciones;
+
 
     @Transient
     private String resetToken;

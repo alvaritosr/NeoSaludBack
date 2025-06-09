@@ -1,10 +1,13 @@
 package com.neo.ssalud.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.neo.ssalud.enums.Sexo;
 import jakarta.persistence.*;
 import lombok.*;
 
 import java.util.Date;
+import java.util.Set;
 
 @Entity
 @Table(name = "paciente", schema = "neosalud")
@@ -64,6 +67,13 @@ public class Paciente {
     private String email;
 
     @ManyToOne
+    @JsonIgnore
     @JoinColumn(name = "medico_id", nullable = false)
     private Medico medico;
+
+    @OneToMany(mappedBy = "paciente")
+    @JsonIgnore
+    @JsonManagedReference("paciente-prescripciones")
+    private Set<Prescripcion> prescripciones;
+
 }
