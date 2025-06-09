@@ -11,4 +11,5 @@ import java.util.List;
 @Repository
 public interface ConsultaRepository extends JpaRepository<Consulta, Long> {
     List<Consulta> findByPaciente(Paciente paciente);
+    List<Consulta> findByPaciente_Medico_Username(String usernameMedico);
 }
