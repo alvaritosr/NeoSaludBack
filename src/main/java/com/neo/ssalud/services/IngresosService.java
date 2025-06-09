@@ -38,11 +38,44 @@ public class IngresosService {
         return ingresosRepository.save(ingreso);
     }
 
+    public Ingresos modificarIngreso(Long id, String nh, String username, Ingresos ingresoActualizado) {
+        Optional<Medico> medico = medicoRepository.findByUsername(username);
+        Optional<Ingresos> ingresoExistente = ingresosRepository.findById(id);
+
+        if (medico.isEmpty()) {
+            throw new IllegalArgumentException("El médico no está autenticado o no existe.");
+        }
+
+        if (ingresoExistente.isEmpty()) {
+            throw new IllegalArgumentException("Ingreso no encontrado con ID: " + id);
+        }
+
+        Paciente paciente = (Paciente) pacienteRepository.findByNh(nh)
+                .orElseThrow(() -> new NoSuchElementException("Paciente no encontrado con el nh: " + nh));
+
+        Ingresos ingreso = ingresoExistente.get();
+        ingreso.setPaciente(paciente);
+        ingreso.setStatus(ingresoActualizado.getStatus());
+        ingreso.setSeveridad(ingresoActualizado.getSeveridad());
+
+        return ingresosRepository.save(ingreso);
+    }
+
     public List<Ingresos> verIngresos(String username) {
         Optional<Medico> medico = medicoRepository.findByUsername(username);
         if (medico.isEmpty()) {
             throw new IllegalArgumentException("El médico no está autenticado o no existe.");
         }
         return ingresosRepository.findAll();
+    }
+
+    public Ingresos verIngresoPorId(Long id, String username) {
+        Optional<Medico> medico = medicoRepository.findByUsername(username);
+        if (medico.isEmpty()) {
+            throw new IllegalArgumentException("El médico no está autenticado o no existe.");
+        }
+
+        return ingresosRepository.findById(id)
+                .orElseThrow(() -> new NoSuchElementException("Ingreso no encontrado con ID: " + id));
     }
 }

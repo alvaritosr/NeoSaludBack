@@ -1,5 +1,6 @@
 package com.neo.ssalud.controllers;
 
+import com.neo.ssalud.dto.ConsultaDTO;
 import com.neo.ssalud.dto.PacienteDTO;
 import com.neo.ssalud.models.Consulta;
 import com.neo.ssalud.models.Medico;
@@ -31,6 +32,7 @@ public class medicoController {
         Paciente nuevoPaciente = medicoService.crearPaciente(pacienteDTO, username);
         return ResponseEntity.status(HttpStatus.CREATED).body(nuevoPaciente);
     }
+
 
     @PutMapping("/pacientes/{nh}/cambiar-medico")
     public ResponseEntity<Paciente> cambiarMedicoDePaciente(
@@ -65,6 +67,19 @@ public class medicoController {
         return ResponseEntity.status(HttpStatus.CREATED).body(nuevaConsulta);
     }
 
+    @PutMapping("/pacientes/{nh}/consultas/{idConsulta}")
+    public ResponseEntity<Consulta> modificarConsulta(
+            @PathVariable String nh,
+            @PathVariable Long idConsulta,
+            @RequestBody Consulta consulta) {
+        Consulta nuevaConsulta = medicoService.modificarConsulta(
+                nh,
+                idConsulta,
+                consulta.getMotivoConsulta(),
+                consulta.getObservaciones());
+        return ResponseEntity.ok(nuevaConsulta);
+    }
+
     @GetMapping("/{username}/consultas")
     public ResponseEntity<List<Consulta>> verConsultasPorMedico(@PathVariable String username) {
         List<Consulta> consultas = medicoService.verConsultasPorMedico(username);
@@ -72,14 +87,20 @@ public class medicoController {
     }
 
     @GetMapping("/pacientes/{nh}/consultas")
-    public ResponseEntity<List<LocalDateTime>> verConsulta(
+    public ResponseEntity<List<ConsultaDTO>> verConsulta(
             @PathVariable String nh,
             @RequestParam String usernameMedico) {
-        List<LocalDateTime> fechasConsultas = medicoService.verConsulta(nh, usernameMedico)
+        List<ConsultaDTO> consultas = medicoService.verConsulta(nh, usernameMedico)
                 .stream()
-                .map(Consulta::getFechaConsulta)
+                .map(consulta -> new ConsultaDTO(consulta.getId(), consulta.getFechaConsulta()))
                 .toList();
-        return ResponseEntity.ok(fechasConsultas);
+        return ResponseEntity.ok(consultas);
+    }
+
+    @GetMapping("/consultas")
+    public ResponseEntity<List<Consulta>> verTodasLasConsultas() {
+        List<Consulta> consultas = medicoService.verTodasLasConsultas();
+        return ResponseEntity.ok(consultas);
     }
 
     @GetMapping("/pacientes/{nh}/consultas/{idConsulta}")
