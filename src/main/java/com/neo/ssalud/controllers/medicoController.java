@@ -119,6 +119,7 @@ public class medicoController {
         return ResponseEntity.ok(consulta);
     }
 
+    @CrossOrigin(origins = "localhost:4200")
     @GetMapping("/pacientes/{nh}")
     public ResponseEntity<Paciente> verDetallePaciente(
             @PathVariable String nh,

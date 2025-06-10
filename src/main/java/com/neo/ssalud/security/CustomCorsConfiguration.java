@@ -17,6 +17,8 @@ public class CustomCorsConfiguration  {
         corsConfiguration.addAllowedMethod("*"); // Permitir todos los métodos (GET, POST, etc.)
         corsConfiguration.addAllowedHeader("*"); // Permitir todos los encabezados
         corsConfiguration.setAllowCredentials(true); // Si usas cookies o sesiones
+        corsConfiguration.addAllowedOrigin("http://localhost:4200");
+
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", corsConfiguration);
         return new CorsFilter(source);
