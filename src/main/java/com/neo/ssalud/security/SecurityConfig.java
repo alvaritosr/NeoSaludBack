@@ -40,6 +40,7 @@ public class SecurityConfig {
                         .requestMatchers("/tac/**").permitAll()
                         .requestMatchers("/medicos/**").permitAll()
                         .requestMatchers("/ws/**").permitAll()
+                        .requestMatchers("/radiografia/**").permitAll()
                         .anyRequest().authenticated()
                 )
                 .authenticationProvider(authenticationProvider)

@@ -62,7 +62,13 @@ public class TacService {
             System.out.println("Not found: " + filePath);
             throw new IOException("DICOM file not found: " + filename);
         }
-        return new UrlResource(filePath.toUri());
+        Resource file = new UrlResource(filePath.toUri());
+
+        if (file.exists() || file.isReadable()) {
+            return file;
+        } else {
+            throw new RuntimeException("No se pudo leer el archivo DICOM");
+        }
     }
 
 
