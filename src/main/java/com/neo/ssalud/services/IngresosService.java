@@ -52,7 +52,7 @@ public class IngresosService {
 
         Ingresos ingreso = ingresoExistente.get();
 
-        if (nh == null) {
+        if (nh == null || nh.isEmpty()) {
             ingreso.setPaciente(null);
         } else {
             Paciente paciente = (Paciente) pacienteRepository.findByNh(nh)
