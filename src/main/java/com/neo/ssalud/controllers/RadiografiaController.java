@@ -5,11 +5,10 @@ import com.neo.ssalud.services.RadiografiaService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.Resource;
+import org.springframework.core.io.UrlResource;
 import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.server.ResponseStatusException;
 
 import java.io.IOException;
 import java.nio.file.Path;
@@ -34,7 +33,7 @@ public class RadiografiaController {
 
         radiografiaService.asignarRadiografiaAPaciente(pacienteId, nombreArchivo);
 
-        return ResponseEntity.ok("Radiografía asignada correctamente al paciente con ID: " + pacienteId);
+        return ResponseEntity.ok("RadiografÃa asignada correctamente al paciente con ID: " + pacienteId);
     }
 
     @GetMapping("/paciente/{id}")
@@ -49,20 +48,15 @@ public class RadiografiaController {
                 .collect(Collectors.toList());
     }
 
+
     @GetMapping(value = "/dicom/{nombreArchivo}", produces = "application/dicom")
-    public ResponseEntity<Resource> getDicomFile(@PathVariable String nombreArchivo) {
-        System.out.println("Iniciando la obtención del archivo DICOM: " + nombreArchivo);
+    public ResponseEntity<Resource> getDicomFile(@PathVariable String nombreArchivo) throws IOException {
+        Resource file = radiografiaService.getDicomFileAsResource(nombreArchivo);
 
-        try {
-            Resource file = radiografiaService.getDicomFileAsResource(nombreArchivo);
-            System.out.println("Archivo obtenido correctamente: " + (file != null ? file.getFilename() : "null"));
-
-            return ResponseEntity.ok()
-                    .header(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=\"" + file.getFilename() + "\"")
-                    .body(file);
-        } catch (IOException e) {
-            System.err.println("Error al obtener el archivo DICOM: " + e.getMessage());
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Archivo DICOM no encontrado: " + nombreArchivo);
-        }
+        return ResponseEntity.ok()
+                .header(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=\"" + file.getFilename() + "\"")
+                .body(file);
     }
+
+
 }

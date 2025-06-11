@@ -45,9 +45,9 @@ public class RadiografiaService {
     public Resource getDicomFileAsResource(String nombreArchivo) throws IOException {
         Path filePath = Paths.get(dicomBasePath + "/" + nombreArchivo);
 
-        if (!Files.exists(filePath) || !Files.isReadable(filePath)) {
-            System.out.println("Archivo no encontrado o no legible: " + filePath.toString());
-            throw new IOException("DICOM file no encontrado o no legible: " + nombreArchivo);
+        if (!Files.exists(filePath)) {
+            System.out.println("Not found: " + filePath);
+            throw new IOException("DICOM file not found: " + nombreArchivo);
         }
 
         Resource file = new UrlResource(filePath.toUri());
