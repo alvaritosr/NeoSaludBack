@@ -86,6 +86,7 @@ public class SecurityConfig {
                         .requestMatchers("/medicos/pacientes/buscar").permitAll()
                         .requestMatchers("/prescripciones/eliminar/**").permitAll()
 
+                        .requestMatchers("/radiografia/**").permitAll()
                         .anyRequest().authenticated()
                 )
                 .authenticationProvider(authenticationProvider)

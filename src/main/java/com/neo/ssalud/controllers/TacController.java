@@ -21,8 +21,6 @@ import java.util.List;
 public class TacController {
 
     private final TacService tacService;
-    private final pacienteRepository pacienteRepository;
-    private final tacRepository tacRepository;
 
 
     @PostMapping("/asignar")
