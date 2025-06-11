@@ -1,7 +1,6 @@
 package com.neo.ssalud.controllers;
 
 import com.neo.ssalud.models.AnalisisMedico;
-import com.neo.ssalud.models.AntecedenteFamiliar;
 import com.neo.ssalud.services.AnalisisMedicoService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -40,8 +39,8 @@ public class AnalisisMedicoController {
     }
 
     @GetMapping("/nombre")
-    public ResponseEntity<AnalisisMedico> obtenerAntecedenteFamiliarPorNombre(@RequestParam String nh,
-                                                                                   @RequestParam String nombre) {
+    public ResponseEntity<AnalisisMedico> obtenerAnalisisPorNombre(@RequestParam String nh,
+                                                                   @RequestParam String nombre) {
         AnalisisMedico analisisMedico = analisisMedicoService.obtenerAnalisisPorNombre(nh, nombre);
         return ResponseEntity.ok(analisisMedico);
     }
