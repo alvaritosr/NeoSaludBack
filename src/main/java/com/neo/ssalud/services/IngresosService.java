@@ -50,11 +50,16 @@ public class IngresosService {
             throw new IllegalArgumentException("Ingreso no encontrado con ID: " + id);
         }
 
-        Paciente paciente = (Paciente) pacienteRepository.findByNh(nh)
-                .orElseThrow(() -> new NoSuchElementException("Paciente no encontrado con el nh: " + nh));
-
         Ingresos ingreso = ingresoExistente.get();
-        ingreso.setPaciente(paciente);
+
+        if (nh == null) {
+            ingreso.setPaciente(null);
+        } else {
+            Paciente paciente = (Paciente) pacienteRepository.findByNh(nh)
+                    .orElseThrow(() -> new NoSuchElementException("Paciente no encontrado con el nh: " + nh));
+            ingreso.setPaciente(paciente);
+        }
+
         ingreso.setStatus(ingresoActualizado.getStatus());
         ingreso.setSeveridad(ingresoActualizado.getSeveridad());
 
