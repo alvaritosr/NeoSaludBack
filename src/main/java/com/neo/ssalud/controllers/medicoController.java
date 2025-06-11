@@ -70,14 +70,19 @@ public class medicoController {
     public ResponseEntity<Consulta> crearConsulta(
             @PathVariable String nh,
             @RequestBody Consulta consulta) {
-        if (consulta.getFechaConsulta() == null) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
+        try {
+            if (consulta.getFechaConsulta() == null) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
+            }
+            Consulta nuevaConsulta = medicoService.crearConsulta(nh, consulta);
+            if (nuevaConsulta == null) {
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+            }
+            return ResponseEntity.status(HttpStatus.CREATED).body(nuevaConsulta);
+        } catch (Exception e) {
+            System.err.println("Error creating consultation: " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(null);
         }
-        Consulta nuevaConsulta = medicoService.crearConsulta(nh, consulta);
-        if (nuevaConsulta == null) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
-        }
-        return ResponseEntity.status(HttpStatus.CREATED).body(nuevaConsulta);
     }
 
     @PutMapping("/pacientes/{nh}/consultas/{idConsulta}")
