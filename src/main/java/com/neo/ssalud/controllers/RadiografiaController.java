@@ -51,7 +51,16 @@ public class RadiografiaController {
 
     @GetMapping(value = "/dicom/{nombreArchivo}", produces = "application/dicom")
     public ResponseEntity<Resource> getDicomFile(@PathVariable String nombreArchivo) throws IOException {
-        Resource file = radiografiaService.getDicomFileAsResource(nombreArchivo);
+        System.out.println("Iniciando la obtención del archivo DICOM: " + nombreArchivo);
+
+        Resource file;
+        try {
+            file = radiografiaService.getDicomFileAsResource(nombreArchivo);
+            System.out.println("Archivo obtenido correctamente: " + (file != null ? file.getFilename() : "null"));
+        } catch (IOException e) {
+            System.err.println("Error al obtener el archivo DICOM: " + e.getMessage());
+            throw e;
+        }
 
         return ResponseEntity.ok()
                 .header(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=\"" + file.getFilename() + "\"")
