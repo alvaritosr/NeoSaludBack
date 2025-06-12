@@ -19,7 +19,7 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
     @Override
     public void registerStompEndpoints(StompEndpointRegistry registry) {
         registry.addEndpoint("/ws")
-                .setAllowedOrigins("http://localhost:4200") // Allow this origin
+                .setAllowedOrigins("https://neosaludback.onrender.com") // Allow this origin
                 .withSockJS();
     }
 }
