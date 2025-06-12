@@ -33,7 +33,7 @@ public class RadiografiaController {
 
         radiografiaService.asignarRadiografiaAPaciente(pacienteId, nombreArchivo);
 
-        return ResponseEntity.ok("Radiografía asignada correctamente al paciente con ID: " + pacienteId);
+        return ResponseEntity.ok("RadiografÃa asignada correctamente al paciente con ID: " + pacienteId);
     }
 
     @GetMapping("/paciente/{id}")
