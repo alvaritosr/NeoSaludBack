@@ -198,7 +198,6 @@ public class medicoService implements UserDetailsService {
                 .orElseThrow(() -> new NoSuchElementException("Paciente no encontrado con el nh: " + nhPaciente));
 
         consulta.setPaciente(paciente);
-        consulta.setFechaConsulta(LocalDateTime.now());
 
         return consultaRepository.save(consulta);
     }
