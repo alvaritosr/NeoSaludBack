@@ -34,5 +34,4 @@ public class ResultadoAnalisis {
     @Column(name = "valor_referencia")
     private Double valorReferencia;
 
-
 }
