@@ -27,11 +27,11 @@ public class Ingresos {
     @Column(name = "numero")
     private String numero;
 
-    @Enumerated(EnumType.STRING)
+
     @Column(name = "status")
     private Status status;
 
-    @Enumerated(EnumType.STRING)
+
     @Column(name = "severidad")
     private Severidad severidad;
 
