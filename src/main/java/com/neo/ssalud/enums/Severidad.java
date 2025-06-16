@@ -4,5 +4,5 @@ public enum Severidad {
     GRAVE,
     MEDIO,
     LEVE,
-    NULA
+    SIN
 }
